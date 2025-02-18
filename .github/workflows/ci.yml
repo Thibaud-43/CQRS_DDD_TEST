@@ -1,0 +1,118 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    paths:
+      - "Backend/**"
+    branches:
+      - main
+      - develop
+  push:
+    paths:
+      - "Backend/**"
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.18.0
+          cache: "yarn"
+          cache-dependency-path: Backend/yarn.lock
+
+      - name: Install dependencies
+        working-directory: Backend
+        run: yarn install --immutable
+
+      - name: Test the Build
+        working-directory: Backend
+        run: yarn build
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.18.0
+          cache: "yarn"
+          cache-dependency-path: Backend/yarn.lock
+
+      - name: Install dependencies
+        working-directory: Backend
+        run: yarn install --immutable
+
+      - name: Run TypeScript type checking
+        working-directory: Backend
+        run: yarn type-check
+
+      - name: Run ESLint
+        working-directory: Backend
+        run: yarn lint
+
+      - name: Run Prettier check
+        working-directory: Backend
+        run: yarn format
+
+      - name: Run Knip (Unused files & exports check)
+        working-directory: Backend
+        run: yarn knip
+
+      - name: Run DepCheck (Unused dependencies check)
+        working-directory: Backend
+        run: yarn depcheck
+
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.18.0
+          cache: "yarn"
+          cache-dependency-path: Backend/yarn.lock
+
+      - name: Install dependencies
+        working-directory: Backend
+        run: yarn install --immutable
+
+      - name: Run Critical Tests
+        working-directory: Backend
+        run: yarn run test:critical
+
+      - name: Run Non Critical Tests
+        working-directory: Backend
+        run: yarn run test:non-critical
+
+  deploy-simulation:
+    needs:
+      - tests
+      - static-analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Simulate AWS deployment
+        run: |
+          echo "✅ Deployed on AWS"

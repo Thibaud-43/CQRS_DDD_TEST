@@ -1,0 +1,6 @@
+# Ignore all files except .ts files
+*.js
+*.json
+*.css
+*.html
+*.md

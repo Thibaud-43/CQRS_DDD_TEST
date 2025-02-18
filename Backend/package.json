@@ -1,0 +1,37 @@
+{
+  "name": "vehicle-fleet-management",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "main": "./dist/UI/fleet.js",
+  "engines": {
+    "node": "18.18.0"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@types/cucumber": "^6.0.1",
+    "@types/node": "^14.0.27",
+    "eslint": "^9.20.1",
+    "globals": "^15.15.0",
+    "prettier": "^3.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.1"
+  },
+  "scripts": {
+    "test": "cucumber-js --profile default",
+    "test:critical": "cucumber-js --tags @critical",
+    "test:non-critical": "cucumber-js --tags 'not @critical'",
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "knip": "echo 'knip not configured yet' ",
+    "depcheck": "echo 'depcheck not configured yet'"
+  },
+  "bin": {
+    "fleet": "./dist/UI/fleet.js"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
+}
